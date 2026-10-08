@@ -1,11 +1,10 @@
 // ==========================================================================
 // Integración Frontend ↔ AWS API Gateway / Lambda
-// Reto Serverless: EventPass · Registro en Evento Tecnológico
+// WanderMistery · Solicitud de Viaje a Destino Misterioso
 // ==========================================================================
 
-// TU endpoint real de API Gateway en us-east-1:
+// Endpoint de API Gateway en us-east-1:
 const API_URL = 'https://vp47aaeych.execute-api.us-east-1.amazonaws.com/dev/contact';
-
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('eventRegistrationForm');
@@ -18,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Evitamos el envío tradicional y recarga de página
     event.preventDefault();
 
-    // 1. Extraemos los valores de los 3 campos mínimos requeridos
+    // 1. Extraemos los valores de los campos del viaje
     const nameInput = document.getElementById('name');
     const emailInput = document.getElementById('email');
     const interestInput = document.getElementById('interest');
@@ -27,9 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailInput ? emailInput.value.trim() : '';
     const interest = interestInput ? interestInput.value.trim() : '';
 
-    // 2. Validación básica en cliente
+    // 2. Validación en cliente
     if (!name || !email || !interest) {
-      showFeedback('Por favor, completa todos los campos requeridos: Nombre, Email e Interés.', 'error');
+      showFeedback('Por favor, rellena tu nombre, email y el tipo de experiencia misteriosa deseada.', 'error');
       return;
     }
 
@@ -40,14 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
       interest: interest
     };
 
-    console.log('🚀 [EventPass] Enviando payload a API Gateway:', payload);
+    console.log('✈️ [WanderMistery] Enviando solicitud a API Gateway:', payload);
 
     // 4. Feedback visual de carga
     setLoadingState(true);
     hideFeedback();
 
     try {
-      // 5. Enviamos la petición POST al endpoint de AWS API Gateway
+      // 5. Enviamos la petición POST al endpoint Serverless
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       const data = await response.json().catch(() => ({}));
-      console.log('📡 [EventPass] Respuesta recibida:', response.status, data);
+      console.log('📡 [WanderMistery] Respuesta recibida:', response.status, data);
 
       if (!response.ok) {
         const errorMsg = data.error || data.message || `Error del servidor (HTTP ${response.status})`;
@@ -65,13 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 6. Éxito: Notificamos al usuario y reseteamos el formulario
-      const successMsg = data.message || `¡Solicitud registrada correctamente para ${name}!`;
-      showFeedback(`✅ ${successMsg}`, 'success');
+      const successMsg = data.message || `¡Aventura solicitada con éxito para ${name}! Te hemos enviado los detalles preliminares a ${email}.`;
+      showFeedback(`🎉 ${successMsg}`, 'success');
       form.reset();
 
     } catch (error) {
-      console.error('❌ [EventPass] Error al enviar solicitud:', error);
-      showFeedback(`❌ Error al registrar solicitud: ${error.message}`, 'error');
+      console.error('❌ [WanderMistery] Error al enviar solicitud:', error);
+      showFeedback(`❌ Error al registrar tu viaje: ${error.message}`, 'error');
     } finally {
       setLoadingState(false);
     }
@@ -84,12 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       submitBtn.innerHTML = `
         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        Enviando solicitud...
+        Preparando tu enigma...
       `;
     } else {
       submitBtn.disabled = false;
       submitBtn.innerHTML = `
-        <span>Solicitar Plaza Ahora</span>
+        <span>Solicitar Mi Viaje Secreto</span>
         <i class="bi-arrow-right-short fs-5"></i>
       `;
     }
