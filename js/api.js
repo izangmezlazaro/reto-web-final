@@ -6,6 +6,7 @@
 // TU endpoint real de API Gateway en us-east-1:
 const API_URL = 'https://vp47aaeych.execute-api.us-east-1.amazonaws.com/dev/contact';
 
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('eventRegistrationForm');
   const submitBtn = document.getElementById('submitBtn');

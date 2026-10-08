@@ -1,37 +1,54 @@
-//jquery-click-scroll
-//by syamsul'isul' Arifin
+// Navigation Click & Scroll Handler (TechSummit / EventPass)
+document.addEventListener('DOMContentLoaded', () => {
+  const navLinks = document.querySelectorAll('.navbar-nav .nav-link, .smoothscroll');
+  const sections = [1, 2, 3, 4, 5].map(id => document.getElementById(`section_${id}`)).filter(Boolean);
 
-var sectionArray = [1, 2, 3, 4, 5];
+  // Smooth scroll handler
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      if (targetId && targetId.startsWith('#')) {
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          e.preventDefault();
+          const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset - 80;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
 
-$.each(sectionArray, function(index, value){
-          
-     $(document).scroll(function(){
-         var offsetSection = $('#' + 'section_' + value).offset().top - 88;
-         var docScroll = $(document).scrollTop();
-         var docScroll1 = docScroll + 1;
-         
-        
-         if ( docScroll1 >= offsetSection ){
-             $('.navbar-nav .nav-item .nav-link').removeClass('active');
-             $('.navbar-nav .nav-item .nav-link:link').addClass('inactive');  
-             $('.navbar-nav .nav-item .nav-link').eq(index).addClass('active');
-             $('.navbar-nav .nav-item .nav-link').eq(index).removeClass('inactive');
-         }
-         
-     });
-    
-    $('.click-scroll').eq(index).click(function(e){
-        var offsetClick = $('#' + 'section_' + value).offset().top - 88;
-        e.preventDefault();
-        $('html, body').animate({
-            'scrollTop':offsetClick
-        }, 300)
+          // Close mobile menu if open
+          const navbarCollapse = document.getElementById('navbarNav');
+          if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+            if (bsCollapse) bsCollapse.hide();
+          }
+        }
+      }
     });
-    
-});
+  });
 
-$(document).ready(function(){
-    $('.navbar-nav .nav-item .nav-link:link').addClass('inactive');    
-    $('.navbar-nav .nav-item .nav-link').eq(0).addClass('active');
-    $('.navbar-nav .nav-item .nav-link:link').eq(0).removeClass('inactive');
+  // Scrollspy active state tracker
+  const handleScroll = () => {
+    const scrollPosition = window.scrollY + 120;
+    
+    sections.forEach((section, index) => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      const sectionId = section.getAttribute('id');
+      
+      if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+          if (link.getAttribute('href') === `#${sectionId}`) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    });
+  };
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
 });
